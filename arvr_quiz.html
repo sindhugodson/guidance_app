@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AR & VR Game Development Quiz</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #8e44ad, #9b59b6);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      text-align: center;
+      background: #fff;
+      width: 100%;
+      padding: 20px;
+      box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2em;
+      color: #8e44ad;
+    }
+    header p {
+      color: #555;
+    }
+    .quiz-container {
+      background: #fff;
+      margin-top: 30px;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 700px;
+    }
+    .quiz-question {
+      font-size: 1.3em;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    .quiz-options button {
+      display: block;
+      width: 100%;
+      background: #f5f5f5;
+      border: none;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+      font-size: 1em;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .quiz-options button:hover {
+      background: #8e44ad;
+      color: #fff;
+    }
+    .quiz-feedback {
+      margin-top: 15px;
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    #nextBtn {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #8e44ad;
+      color: #fff;
+      font-size: 1em;
+      cursor: pointer;
+      display: none;
+      transition: 0.3s;
+    }
+    #nextBtn:hover {
+      background: #6d2d88;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎮 AR & VR Game Development Quiz</h1>
+    <p>Test your knowledge of Augmented & Virtual Reality in gaming!</p>
+  </header>
+  <div class="quiz-container">
+    <div class="quiz-question" id="question"></div>
+    <div class="quiz-options" id="options"></div>
+    <div class="quiz-feedback" id="feedback"></div>
+    <button id="nextBtn">Next Question</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What does AR stand for?",
+        options: ["Advanced Reality", "Augmented Reality", "Artificial Rendering", "Applied Robotics"],
+        answer: 1
+      },
+      {
+        question: "What device is primarily used for VR gaming?",
+        options: ["Smartphone", "VR Headset", "Smartwatch", "Tablet"],
+        answer: 1
+      },
+      {
+        question: "Which company developed the Oculus Rift?",
+        options: ["Sony", "Meta (Facebook)", "Microsoft", "Apple"],
+        answer: 1
+      },
+      {
+        question: "Which programming engine is widely used in AR/VR game development?",
+        options: ["Unity", "Flask", "React", "Spring Boot"],
+        answer: 0
+      },
+      {
+        question: "In AR, digital objects are:",
+        options: ["Placed into the real world", "Completely replacing reality", "Only text-based overlays", "Visible only in 2D"],
+        answer: 0
+      },
+      {
+        question: "Which VR headset works with PlayStation?",
+        options: ["Oculus Quest", "Valve Index", "PlayStation VR", "HTC Vive"],
+        answer: 2
+      },
+      {
+        question: "What does 6DoF mean in VR?",
+        options: ["Six Degrees of Freedom", "Six Devices of Functionality", "Six Dimensions of Fun", "Six Data Operations Framework"],
+        answer: 0
+      },
+      {
+        question: "Which device is commonly used for AR applications on smartphones?",
+        options: ["GPS & Camera", "Accelerometer & Gyroscope", "Touchscreen", "All of the above"],
+        answer: 3
+      },
+      {
+        question: "Which technology enables VR environments to feel immersive?",
+        options: ["Haptics", "Sensors", "Head Tracking", "All of the above"],
+        answer: 3
+      },
+      {
+        question: "Which popular game uses AR technology?",
+        options: ["Minecraft", "Fortnite", "Pokémon GO", "GTA V"],
+        answer: 2
+      }
+    ];
+
+    let current = 0;
+
+    function showQuestion(idx) {
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('nextBtn').style.display = 'none';
+      const q = questions[idx];
+      document.getElementById('question').textContent = q.question;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = String.fromCharCode(65 + i) + ") " + opt;
+        btn.onclick = () => checkAnswer(i);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      const q = questions[current];
+      const feedback = document.getElementById('feedback');
+      if (selected === q.answer) {
+        feedback.textContent = "✅ Correct!";
+        feedback.style.color = "green";
+        document.getElementById('nextBtn').style.display = current < questions.length - 1 ? 'inline-block' : 'none';
+      } else {
+        feedback.textContent = "❌ Incorrect. Try again!";
+        feedback.style.color = "red";
+      }
+    }
+
+    document.getElementById('nextBtn').onclick = function() {
+      current++;
+      if (current < questions.length) {
+        showQuestion(current);
+      } else {
+        document.getElementById('question').textContent = "🎉 You've completed the AR & VR Game Development Quiz!";
+        document.getElementById('options').innerHTML = '';
+        document.getElementById('feedback').textContent = '';
+        document.getElementById('nextBtn').style.display = 'none';
+      }
+    };
+
+    // Load first question
+    showQuestion(current);
+  </script>
+</body>
+</html>

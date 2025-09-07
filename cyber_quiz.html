@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Security Quiz</title>
+  <style>
+    /* Background gradient */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    /* Quiz container */
+    .quiz-container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      text-align: center;
+      width: 90%;
+      max-width: 650px;
+      box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    /* Title */
+    .quiz-container h1 {
+      margin-bottom: 10px;
+      font-size: 2rem;
+      color: #00e5ff;
+    }
+
+    .quiz-container p {
+      margin-bottom: 20px;
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    /* Question */
+    .question {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+
+    /* Options */
+    .options button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      background: #fff;
+      color: #333;
+      transition: all 0.3s ease;
+    }
+
+    .options button:hover {
+      background: #00e5ff;
+      color: #fff;
+      transform: scale(1.03);
+    }
+
+    /* Next button */
+    #next-btn {
+      margin-top: 20px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      background: #ff9800;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+      display: none;
+    }
+
+    #next-btn:hover {
+      background: #e68900;
+    }
+
+    /* Score result */
+    .result {
+      font-size: 1.5rem;
+      margin-top: 20px;
+      font-weight: bold;
+      color: #00ff99;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>🔐 Cyber Security Quiz</h1>
+    <p>Test your knowledge of cyber threats, attacks, and defenses!</p>
+    
+    <div id="quiz">
+      <div class="question" id="question">Loading question...</div>
+      <div class="options" id="options"></div>
+      <button id="next-btn">Next</button>
+    </div>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "Which of the following is an example of social engineering?",
+        options: ["Phishing", "Firewall", "Encryption", "VPN"],
+        answer: "Phishing"
+      },
+      {
+        question: "What does DDoS stand for?",
+        options: [
+          "Distributed Denial of Service",
+          "Direct Data of Security",
+          "Digital Deployment of Software",
+          "Data Division over Servers"
+        ],
+        answer: "Distributed Denial of Service"
+      },
+      {
+        question: "Which type of malware locks your files and demands payment?",
+        options: ["Worm", "Spyware", "Ransomware", "Trojan"],
+        answer: "Ransomware"
+      },
+      {
+        question: "What is the main purpose of a firewall?",
+        options: [
+          "Encrypt passwords",
+          "Block unauthorized access",
+          "Remove viruses",
+          "Speed up internet"
+        ],
+        answer: "Block unauthorized access"
+      },
+      {
+        question: "Which protocol is secure for transferring data over the web?",
+        options: ["HTTP", "HTTPS", "FTP", "SMTP"],
+        answer: "HTTPS"
+      },
+      {
+        question: "What is multi-factor authentication (MFA)?",
+        options: [
+          "Using one password",
+          "Using two or more verification methods",
+          "Encrypting all emails",
+          "Installing antivirus software"
+        ],
+        answer: "Using two or more verification methods"
+      },
+      {
+        question: "What type of attack involves tricking users into revealing confidential information?",
+        options: ["Phishing", "SQL Injection", "Brute Force", "DDoS"],
+        answer: "Phishing"
+      },
+      {
+        question: "Which of the following is a strong password?",
+        options: [
+          "12345678",
+          "Password123",
+          "Qw!9@Lz#7pR",
+          "abcd1234"
+        ],
+        answer: "Qw!9@Lz#7pR"
+      },
+      {
+        question: "Which cyber attack involves injecting malicious code into a website database?",
+        options: ["SQL Injection", "Phishing", "Ransomware", "Trojan Horse"],
+        answer: "SQL Injection"
+      },
+      {
+        question: "Which device is commonly used to secure networks from external threats?",
+        options: ["Router", "Firewall", "Switch", "Hub"],
+        answer: "Firewall"
+      }
+    ];
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const nextBtn = document.getElementById("next-btn");
+    const resultEl = document.getElementById("result");
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const currentQuestion = questions[currentQuestionIndex];
+      questionEl.textContent = currentQuestion.question;
+      optionsEl.innerHTML = "";
+
+      currentQuestion.options.forEach(option => {
+        const button = document.createElement("button");
+        button.textContent = option;
+        button.onclick = () => checkAnswer(option);
+        optionsEl.appendChild(button);
+      });
+    }
+
+    function checkAnswer(selected) {
+      const correctAnswer = questions[currentQuestionIndex].answer;
+      if (selected === correctAnswer) {
+        score++;
+      }
+      Array.from(optionsEl.children).forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === correctAnswer) {
+          btn.style.background = "#4caf50";
+          btn.style.color = "#fff";
+        } else if (btn.textContent === selected) {
+          btn.style.background = "#f44336";
+          btn.style.color = "#fff";
+        }
+      });
+      nextBtn.style.display = "inline-block";
+    }
+
+    nextBtn.addEventListener("click", () => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+        nextBtn.style.display = "none";
+      } else {
+        showResult();
+      }
+    });
+
+    function showResult() {
+      document.getElementById("quiz").style.display = "none";
+      resultEl.textContent = `🎉 You scored ${score} out of ${questions.length}!`;
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>

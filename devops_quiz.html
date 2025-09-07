@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DevOps & Automation Quiz</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #ff512f, #dd2476);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      text-align: center;
+      background: #fff;
+      width: 100%;
+      padding: 20px;
+      box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2em;
+      color: #dd2476;
+    }
+    header p {
+      color: #555;
+    }
+    .quiz-container {
+      background: #fff;
+      margin-top: 30px;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 700px;
+    }
+    .quiz-question {
+      font-size: 1.3em;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    .quiz-options button {
+      display: block;
+      width: 100%;
+      background: #f5f5f5;
+      border: none;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+      font-size: 1em;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .quiz-options button:hover {
+      background: #dd2476;
+      color: #fff;
+    }
+    .quiz-feedback {
+      margin-top: 15px;
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    #nextBtn {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #dd2476;
+      color: #fff;
+      font-size: 1em;
+      cursor: pointer;
+      display: none;
+      transition: 0.3s;
+    }
+    #nextBtn:hover {
+      background: #a31545;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>⚙️ DevOps & Automation Quiz</h1>
+    <p>Test your knowledge of DevOps practices and automation tools!</p>
+  </header>
+  <div class="quiz-container">
+    <div class="quiz-question" id="question"></div>
+    <div class="quiz-options" id="options"></div>
+    <div class="quiz-feedback" id="feedback"></div>
+    <button id="nextBtn">Next Question</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What does CI/CD stand for in DevOps?",
+        options: ["Continuous Integration / Continuous Deployment", "Code Inspection / Code Debugging", "Cloud Infrastructure / Cloud Development", "Continuous Improvement / Continuous Design"],
+        answer: 0
+      },
+      {
+        question: "Which tool is widely used for automation of infrastructure provisioning?",
+        options: ["Ansible", "Jenkins", "Git", "Docker"],
+        answer: 0
+      },
+      {
+        question: "Docker is mainly used for?",
+        options: ["Virtual Machines", "Configuration Management", "Containerization", "Monitoring"],
+        answer: 2
+      },
+      {
+        question: "Which tool is most popular for CI/CD pipelines?",
+        options: ["Terraform", "Jenkins", "Nagios", "GitHub"],
+        answer: 1
+      },
+      {
+        question: "What does Infrastructure as Code (IaC) mean?",
+        options: ["Writing code to build applications", "Managing infrastructure using code", "Coding network protocols", "Debugging software infrastructure"],
+        answer: 1
+      },
+      {
+        question: "Which of these is a container orchestration tool?",
+        options: ["Jenkins", "Kubernetes", "Terraform", "Git"],
+        answer: 1
+      },
+      {
+        question: "Which DevOps tool is used for monitoring and alerting?",
+        options: ["Prometheus", "Docker", "Kubernetes", "GitLab"],
+        answer: 0
+      },
+      {
+        question: "What is the main advantage of automation in DevOps?",
+        options: ["More manual effort", "Reduced speed", "Faster delivery and fewer errors", "Higher costs"],
+        answer: 2
+      },
+      {
+        question: "Which tool is primarily used for infrastructure automation with declarative configuration?",
+        options: ["Jenkins", "Terraform", "Kubernetes", "Docker"],
+        answer: 1
+      },
+      {
+        question: "Which of the following is NOT a DevOps practice?",
+        options: ["Continuous Testing", "Continuous Deployment", "Manual Code Merge", "Continuous Monitoring"],
+        answer: 2
+      }
+    ];
+
+    let current = 0;
+
+    function showQuestion(idx) {
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('nextBtn').style.display = 'none';
+      const q = questions[idx];
+      document.getElementById('question').textContent = q.question;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = String.fromCharCode(65 + i) + ") " + opt;
+        btn.onclick = () => checkAnswer(i);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      const q = questions[current];
+      const feedback = document.getElementById('feedback');
+      if (selected === q.answer) {
+        feedback.textContent = "✅ Correct!";
+        feedback.style.color = "green";
+        document.getElementById('nextBtn').style.display = current < questions.length - 1 ? 'inline-block' : 'none';
+      } else {
+        feedback.textContent = "❌ Incorrect. Try again!";
+        feedback.style.color = "red";
+      }
+    }
+
+    document.getElementById('nextBtn').onclick = function() {
+      current++;
+      if (current < questions.length) {
+        showQuestion(current);
+      } else {
+        document.getElementById('question').textContent = "🎉 You've completed the DevOps & Automation Quiz!";
+        document.getElementById('options').innerHTML = '';
+        document.getElementById('feedback').textContent = '';
+        document.getElementById('nextBtn').style.display = 'none';
+      }
+    };
+
+    // Load first question
+    showQuestion(current);
+  </script>
+</body>
+</html>

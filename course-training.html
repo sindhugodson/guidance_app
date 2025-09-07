@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Course Training – PathPilot</title>
+<style>
+  :root{
+    --bg1:#0f0c29; --bg2:#302b63; --bg3:#24243e;
+    --card:rgba(255,255,255,0.08); --muted:#cfd3ff; --text:#fff;
+    --btn1:#1e3c72; --btn2:#2a5298; --ok:#36d399; --warn:#fbbf24;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:Inter,system-ui,Arial,sans-serif; color:var(--text);
+    background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+  }
+  .shell{width:95%; max-width:1100px; padding:24px}
+  .nav{
+    display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px
+  }
+  .brand{font-weight:800; letter-spacing:.4px}
+  .pill{
+    border:none; padding:10px 14px; border-radius:999px; cursor:pointer; color:white;
+    background:linear-gradient(90deg,var(--btn1),var(--btn2)); transition:.2s
+  }
+  .pill.ghost{background:transparent; outline:1px solid rgba(255,255,255,.2)}
+  .pill:hover{filter:brightness(1.08)}
+  .toolbar{
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:10px 0 18px
+  }
+  .chips{display:flex; gap:8px; flex-wrap:wrap}
+  .chip{
+    padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.06); cursor:pointer; user-select:none; font-size:14px
+  }
+  .chip.active{outline:2px solid rgba(255,255,255,.35)}
+  .search{
+    flex:1; min-width:220px; display:flex; gap:8px
+  }
+  .search input{
+    width:100%; padding:10px 12px; border-radius:12px; border:none;
+    background:rgba(0,0,0,.35); color:white; outline:1px solid rgba(255,255,255,.18)
+  }
+  .grid{
+    display:grid; gap:14px;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  }
+  .card{
+    background:var(--card); border-radius:18px; padding:16px; box-shadow:0 8px 20px rgba(0,0,0,.35)
+  }
+  .card h3{margin:0 0 6px; font-size:18px}
+  .meta{font-size:13px; color:var(--muted); margin-bottom:10px}
+  .links{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 12px}
+  .links a{
+    text-decoration:none; font-size:13px; padding:7px 10px; border-radius:10px;
+    background:rgba(255,255,255,.06); outline:1px solid rgba(255,255,255,.14); color:white
+  }
+  .progress-row{display:flex; align-items:center; gap:8px; margin-top:10px}
+  .bar{flex:1; height:10px; background:rgba(255,255,255,.12); border-radius:999px; overflow:hidden}
+  .fill{height:100%; width:0%; background:linear-gradient(90deg,#22c55e,#16a34a)}
+  .actions{display:flex; gap:8px; margin-top:12px}
+  .btn{
+    border:none; padding:10px 12px; border-radius:12px; cursor:pointer; color:white;
+    background:linear-gradient(90deg,var(--btn1),var(--btn2)); flex:1
+  }
+  .btn.secondary{background:transparent; outline:1px solid rgba(255,255,255,.25)}
+  .badge{
+    display:inline-block; font-size:11px; padding:4px 8px; border-radius:999px; margin-right:6px;
+    background:rgba(34,197,94,.2); outline:1px solid rgba(34,197,94,.35)
+  }
+  .section-title{margin:16px 0 8px; font-size:20px}
+  .empty{opacity:.8; text-align:center; padding:20px}
+  .hint{font-size:12px; color:var(--muted); margin-top:4px}
+</style>
+</head>
+<body>
+  <div class="shell">
+    <!-- Top Nav -->
+    <div class="nav">
+      <div class="brand">🚀 PathPilot • <span style="opacity:.8">Course Training</span></div>
+      <div style="display:flex; gap:8px">
+        <a href="index.html"><button class="pill ghost">🏠 Home</button></a>
+        <a href="skill-assessment.html"><button class="pill">🧪 Skill Assessment</button></a>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="chips" id="subjectChips">
+        <div class="chip active" data-subject="ALL">All</div>
+        <div class="chip" data-subject="DSA">DSA</div>
+        <div class="chip" data-subject="OOPs">OOPs</div>
+        <div class="chip" data-subject="CN">CN</div>
+        <div class="chip" data-subject="DBMS">DBMS</div>
+      </div>
+
+      <div class="search">
+        <input id="searchBox" placeholder="Search modules (e.g., arrays, SQL, OSI, polymorphism)"/>
+        <button class="pill" id="clearSearch">Clear</button>
+      </div>
+    </div>
+
+    <!-- Recommended -->
+    <div id="recommendedWrap">
+      <div class="section-title">🎯 Recommended for you</div>
+      <div class="grid" id="recommendedGrid"></div>
+      <div class="hint">Tip: This section highlights beginner modules for subjects where your assessment score was lower. If you store scores, use localStorage key <code>pp_skill_results</code> = {"DSA":3,"OOPs":4,"CN":2,"DBMS":1}.</div>
+    </div>
+
+    <!-- All Modules -->
+    <div class="section-title">📚 All Modules</div>
+    <div class="grid" id="modulesGrid"></div>
+    <div class="empty" id="emptyState" style="display:none">No modules match your filter. Try clearing search or switching subject.</div>
+
+    <!-- Footer actions -->
+    <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap">
+      <button class="pill" id="markAllComplete">Mark visible modules complete</button>
+      <button class="pill ghost" id="resetProgress">Reset progress</button>
+    </div>
+  </div>
+
+<script>
+/**
+ * Simple hardcoded catalog.
+ * Each module has: id, subject, level, title, description, links[], minutes, prerequisites[]
+ */
+const CATALOG = [
+  // DSA
+  m('DSA','Beginner','Arrays 101','Traverse, insert, delete, prefix sums',{
+    video:'https://youtu.be/utE_1ppU5DY', notes:'https://neetcode.io/roadmap', practice:'https://leetcode.com/explore/learn/card/array-and-string/'
+  },50),
+  m('DSA','Beginner','Time & Space Complexity','Big-O basics, common classes',{
+    video:'https://youtu.be/D6xkbGLQesk', notes:'https://www.programiz.com/dsa/time-and-space-complexity', practice:'https://www.hackerrank.com/challenges/complexity'
+  },35),
+  m('DSA','Intermediate','Stacks & Queues','Stack/Queue patterns, monotonic stack',{
+    video:'https://youtu.be/5UFk1kA3Z1Y', notes:'https://www.geeksforgeeks.org/stack-data-structure/', practice:'https://leetcode.com/tag/stack/'
+  },60),
+  m('DSA','Intermediate','Linked Lists','Singly/Doubly, fast-slow pointer',{
+    video:'https://youtu.be/6U3bK2o2Ygk', notes:'https://www.geeksforgeeks.org/data-structures/linked-list/', practice:'https://leetcode.com/tag/linked-list/'
+  },55),
+  m('DSA','Intermediate','Binary Search','Patterns on answers, boundaries',{
+    video:'https://youtu.be/w2G2W8l__pc', notes:'https://cp-algorithms.com/num_methods/binary_search.html', practice:'https://leetcode.com/tag/binary-search/'
+  },45),
+  m('DSA','Intermediate','Trees Basics','Traversal, height, BST intro',{
+    video:'https://youtu.be/sBqD3qG6h4c', notes:'https://www.programiz.com/dsa/trees', practice:'https://leetcode.com/tag/tree/'
+  },70),
+  m('DSA','Advanced','Graphs & BFS/DFS','Adjacency, BFS/DFS templates',{
+    video:'https://youtu.be/oBt53YbR9Kk?t=8426', notes:'https://cp-algorithms.com/graph/depth-first-search.html', practice:'https://leetcode.com/tag/graph/'
+  },80,['Trees Basics']),
+  m('DSA','Advanced','Dijkstra & Shortest Paths','Priority queue, paths',{
+    video:'https://youtu.be/pVfj6mxhdMw', notes:'https://cp-algorithms.com/graph/dijkstra.html', practice:'https://leetcode.com/tag/shortest-path/'
+  },65,['Graphs & BFS/DFS']),
+  m('DSA','Advanced','Greedy & Two Pointers','Typical patterns',{
+    video:'https://youtu.be/A2fgqV6vX2o', notes:'https://www.geeksforgeeks.org/greedy-algorithms/', practice:'https://leetcode.com/tag/two-pointers/'
+  },55),
+  m('DSA','Advanced','Dynamic Programming Primer','Top-down, bottom-up',{
+    video:'https://youtu.be/-f4GbkgeA7M', notes:'https://cp-algorithms.com/dp/', practice:'https://leetcode.com/tag/dynamic-programming/'
+  },90),
+
+  // OOPs
+  m('OOPs','Beginner','OOP Fundamentals','Class, object, abstraction',{
+    video:'https://youtu.be/SiBw7os-_zI', notes:'https://www.programiz.com/oop', practice:'https://www.hackerrank.com/domains/java'
+  },45),
+  m('OOPs','Beginner','Encapsulation & Access Modifiers','private/public/protected',{
+    video:'https://youtu.be/LaijbUcX2j0', notes:'https://www.geeksforgeeks.org/encapsulation-in-java/', practice:'https://leetcode.com/tag/object-oriented-design/'
+  },40),
+  m('OOPs','Intermediate','Inheritance','IS-A, code reuse',{
+    video:'https://youtu.be/e2U1v3c5E04', notes:'https://www.programiz.com/java-programming/inheritance', practice:'https://www.hackerrank.com/challenges/java-inheritance-1'
+  },50),
+  m('OOPs','Intermediate','Polymorphism','Overloading/overriding',{
+    video:'https://youtu.be/oehA9WcC5Cw', notes:'https://www.javatpoint.com/polymorphism-in-java', practice:'https://www.hackerrank.com/challenges/java-method-overriding'
+  },55),
+  m('OOPs','Intermediate','Interfaces & Abstract Classes','when/why',{
+    video:'https://youtu.be/kwd5KCqKQmA', notes:'https://docs.oracle.com/javase/tutorial/java/IandI/', practice:'https://www.hackerrank.com/challenges/java-abstract-class'
+  },50),
+  m('OOPs','Advanced','SOLID Principles','Clean design',{
+    video:'https://youtu.be/pTbSfCT42_M', notes:'https://www.baeldung.com/solid-principles', practice:'https://leetcode.com/discuss/interview-question/object-oriented-design'
+  },60),
+  m('OOPs','Advanced','Design Patterns I','Factory, Singleton',{
+    video:'https://youtu.be/NU_1StN5Tkk', notes:'https://refactoring.guru/design-patterns', practice:'https://www.hackerrank.com/topics/design-patterns'
+  },70),
+  m('OOPs','Advanced','Design Patterns II','Strategy, Observer',{
+    video:'https://youtu.be/v9ejT8FO-7I', notes:'https://refactoring.guru/design-patterns/strategy', practice:'https://www.hackerrank.com/topics/design-patterns'
+  },70),
+
+  // CN
+  m('CN','Beginner','Networking Basics','LAN/WAN, protocols',{
+    video:'https://youtu.be/qiQR5rTSshw', notes:'https://www.geeksforgeeks.org/basics-computer-networking/', practice:'https://www.sanfoundry.com/networking-questions-answers/'
+  },45),
+  m('CN','Beginner','OSI vs TCP/IP','layered model',{
+    video:'https://youtu.be/Ilk7UXzV_Qc', notes:'https://www.geeksforgeeks.org/differences-between-osi-and-tcp-ip-reference-model/', practice:'https://www.hackerrank.com/skills-verification/networking'
+  },35),
+  m('CN','Intermediate','IP Addressing & Subnetting','CIDR, masks',{
+    video:'https://youtu.be/5rA1h3kTZK0', notes:'https://www.practicalnetworking.net/series/subnetting/', practice:'https://www.subnettingpractice.com/'
+  },60),
+  m('CN','Intermediate','TCP/UDP & Ports','reliability vs speed',{
+    video:'https://youtu.be/wwQ8cNRBW9w', notes:'https://www.cloudflare.com/learning/network-layer/what-is-tcp/', practice:'https://www.hackerrank.com/skills-verification/networking'
+  },50),
+  m('CN','Advanced','DNS & DHCP','name resolution, leases',{
+    video:'https://youtu.be/mpQZVYPuDGU', notes:'https://www.cloudflare.com/learning/dns/what-is-dns/', practice:'https://www.sanfoundry.com/dns-questions-answers/'
+  },55),
+  m('CN','Advanced','Routing Basics','DV/LS, Dijkstra',{
+    video:'https://youtu.be/anb3vb6rZ3k', notes:'https://www.geeksforgeeks.org/difference-between-distance-vector-and-link-state-routing/', practice:'https://www.hackerrank.com/skills-verification/networking'
+  },65),
+
+  // DBMS
+  m('DBMS','Beginner','SQL Basics SELECT/WHERE','CRUD intro',{
+    video:'https://youtu.be/HXV3zeQKqGY', notes:'https://www.w3schools.com/sql/', practice:'https://www.hackerrank.com/domains/sql'
+  },50),
+  m('DBMS','Beginner','Joins Primer','INNER/LEFT/RIGHT',{
+    video:'https://youtu.be/9yeOJ0ZMUYw', notes:'https://www.geeksforgeeks.org/sql-join-set-1-inner-left-right-and-full-joins/', practice:'https://leetcode.com/study-plan/sql/'
+  },45),
+  m('DBMS','Intermediate','Normalization & Keys','1NF–BCNF, PK/FK',{
+    video:'https://youtu.be/UrYLYV7WSHM', notes:'https://www.geeksforgeeks.org/normal-forms-in-dbms/', practice:'https://www.hackerrank.com/domains/sql'
+  },55),
+  m('DBMS','Intermediate','Transactions & ACID','isolation, locks',{
+    video:'https://youtu.be/5ZjhNTM8XU8', notes:'https://www.postgresql.org/docs/current/transaction-iso.html', practice:'https://www.geeksforgeeks.org/acid-properties-in-dbms/'
+  },50),
+  m('DBMS','Advanced','Indexes & Query Tuning','btree, explain',{
+    video:'https://youtu.be/zw3jXK7R3jA', notes:'https://use-the-index-luke.com/', practice:'https://www.hackerrank.com/domains/sql'
+  },65),
+  m('DBMS','Advanced','Stored Procedures & Triggers','logic in DB',{
+    video:'https://youtu.be/U2n4H3d3QXk', notes:'https://dev.mysql.com/doc/refman/8.0/en/stored-programs-views.html', practice:'https://www.geeksforgeeks.org/sql-trigger-student-database/'
+  },55),
+];
+
+// --- helpers
+function m(subject,level,title,desc,links,minutes,prereq=[]){
+  const id = `${subject}-${title}`.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  return {id,subject,level,title,desc,links,minutes,prereq};
+}
+const $ = sel => document.querySelector(sel);
+const grid = $('#modulesGrid');
+const recGrid = $('#recommendedGrid');
+const emptyState = $('#emptyState');
+const STORAGE_KEY = 'pp_course_progress_v1';
+let progress = JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');
+let activeSubject = 'ALL';
+let query = '';
+
+// Optional: read assessment results if available to drive recommendations
+// expected format: {"DSA":<0-5>, "OOPs":<0-5>, "CN":<0-5>, "DBMS":<0-5>}
+let scores = {};
+try { scores = JSON.parse(localStorage.getItem('pp_skill_results')||'{}'); } catch{}
+
+// --- rendering
+function render(){
+  // filter by subject and search
+  const list = CATALOG.filter(x=>{
+    const okSub = activeSubject==='ALL' || x.subject===activeSubject;
+    const q = query.trim().toLowerCase();
+    const okQ = !q || [x.title,x.subject,x.level, x.desc].join(' ').toLowerCase().includes(q);
+    return okSub && okQ;
+  });
+  grid.innerHTML = list.map(renderCard).join('');
+  emptyState.style.display = list.length? 'none':'block';
+  // recommended: show only Beginner of low-score subjects
+  const lowSubjects = Object.entries(scores)
+    .filter(([k,v])=>v!==null && v!==undefined && v<=2) // <=2/5 treated as weak
+    .map(([k])=>k);
+  const rec = CATALOG.filter(x=>lowSubjects.includes(x.subject) && x.level==='Beginner').slice(0,8);
+  $('#recommendedWrap').style.display = rec.length? 'block':'none';
+  recGrid.innerHTML = rec.map(c=>renderCard(c,true)).join('');
+}
+function renderCard(mod, small=false){
+  const pct = Math.min(100, Math.max(0, Number(progress[mod.id]||0)));
+  const prereqTxt = mod.prereq?.length ? `Prereq: ${mod.prereq.join(', ')}` : '';
+  const minuteTxt = `${mod.minutes} min`;
+  const badge = small ? `<span class="badge">Recommended</span>` : '';
+  return `
+    <div class="card" data-id="${mod.id}">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px">
+        <h3>${badge}${mod.title}</h3>
+        <span class="meta">${mod.subject} • ${mod.level}</span>
+      </div>
+      <div class="meta">${mod.desc}. ${prereqTxt} ${prereqTxt? '•':''} ${minuteTxt}</div>
+      <div class="links">
+        <a href="${mod.links.video}" target="_blank">▶ Video</a>
+        <a href="${mod.links.notes}" target="_blank">📝 Notes</a>
+        <a href="${mod.links.practice}" target="_blank">💻 Practice</a>
+      </div>
+      <div class="progress-row">
+        <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+        <div class="meta" style="min-width:48px; text-align:right">${pct}%</div>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="inc('${mod.id}',20)">+20% Learn</button>
+        <button class="btn secondary" onclick="set100('${mod.id}')">Mark Complete</button>
+      </div>
+    </div>
+  `;
+}
+
+// --- progress ops
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); }
+function inc(id,by){
+  const v = Math.min(100, (progress[id]||0)+by);
+  progress[id]=v; save(); render();
+}
+function set100(id){
+  progress[id]=100; save(); render();
+}
+
+// --- UI wiring
+document.getElementById('subjectChips').addEventListener('click', (e)=>{
+  const el = e.target.closest('.chip'); if(!el) return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  activeSubject = el.dataset.subject;
+  render();
+});
+document.getElementById('searchBox').addEventListener('input', (e)=>{
+  query = e.target.value; render();
+});
+document.getElementById('clearSearch').addEventListener('click', ()=>{
+  query=''; $('#searchBox').value=''; render();
+});
+document.getElementById('markAllComplete').addEventListener('click', ()=>{
+  document.querySelectorAll('#modulesGrid .card').forEach(card=>{
+    const id = card.getAttribute('data-id'); progress[id]=100;
+  });
+  save(); render();
+});
+document.getElementById('resetProgress').addEventListener('click', ()=>{
+  if(confirm('Reset all Course Training progress?')){ progress={}; save(); render(); }
+});
+
+// initial render
+render();
+</script>
+</body>
+</html>

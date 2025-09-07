@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cloud Computing Quiz</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      text-align: center;
+      background: #fff;
+      width: 100%;
+      padding: 20px;
+      box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2em;
+      color: #007bff;
+    }
+    header p {
+      color: #555;
+    }
+    .quiz-container {
+      background: #fff;
+      margin-top: 30px;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 700px;
+    }
+    .quiz-question {
+      font-size: 1.3em;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    .quiz-options button {
+      display: block;
+      width: 100%;
+      background: #f5f5f5;
+      border: none;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+      font-size: 1em;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .quiz-options button:hover {
+      background: #007bff;
+      color: #fff;
+    }
+    .quiz-feedback {
+      margin-top: 15px;
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    #nextBtn {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #007bff;
+      color: #fff;
+      font-size: 1em;
+      cursor: pointer;
+      display: none;
+      transition: 0.3s;
+    }
+    #nextBtn:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>☁️ Cloud Computing Quiz</h1>
+    <p>Test your knowledge of Cloud platforms and services!</p>
+  </header>
+  <div class="quiz-container">
+    <div class="quiz-question" id="question"></div>
+    <div class="quiz-options" id="options"></div>
+    <div class="quiz-feedback" id="feedback"></div>
+    <button id="nextBtn">Next Question</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "Which of the following is NOT a major cloud provider?",
+        options: ["AWS", "Google Cloud", "Microsoft Azure", "Oracle VirtualBox"],
+        answer: 3
+      },
+      {
+        question: "What does SaaS stand for?",
+        options: ["Software as a Service", "Storage as a System", "Security as a Service", "System as a Software"],
+        answer: 0
+      },
+      {
+        question: "Which AWS service is used for serverless computing?",
+        options: ["EC2", "Lambda", "S3", "RDS"],
+        answer: 1
+      },
+      {
+        question: "Which type of cloud is owned and operated by a single organization?",
+        options: ["Public Cloud", "Private Cloud", "Hybrid Cloud", "Community Cloud"],
+        answer: 1
+      },
+      {
+        question: "Which cloud service provides raw computing resources like servers and storage?",
+        options: ["IaaS", "PaaS", "SaaS", "DaaS"],
+        answer: 0
+      },
+      {
+        question: "Google Cloud’s data warehouse service is called?",
+        options: ["BigQuery", "Cloud SQL", "Firestore", "Hadoop"],
+        answer: 0
+      },
+      {
+        question: "Which Azure service is primarily used for hosting web apps?",
+        options: ["Azure Virtual Machines", "Azure App Service", "Azure Blob Storage", "Azure Functions"],
+        answer: 1
+      },
+      {
+        question: "Which of the following is a benefit of cloud computing?",
+        options: ["Scalability", "High initial cost", "Limited access", "Manual backups only"],
+        answer: 0
+      },
+      {
+        question: "What is the full form of VM in cloud computing?",
+        options: ["Virtual Machine", "Variable Module", "Verified Model", "Virtual Memory"],
+        answer: 0
+      },
+      {
+        question: "Which storage service is offered by AWS for object storage?",
+        options: ["Amazon RDS", "Amazon S3", "Amazon EC2", "Amazon DynamoDB"],
+        answer: 1
+      }
+    ];
+
+    let current = 0;
+
+    function showQuestion(idx) {
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('nextBtn').style.display = 'none';
+      const q = questions[idx];
+      document.getElementById('question').textContent = q.question;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = String.fromCharCode(65 + i) + ") " + opt;
+        btn.onclick = () => checkAnswer(i);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      const q = questions[current];
+      const feedback = document.getElementById('feedback');
+      if (selected === q.answer) {
+        feedback.textContent = "✅ Correct!";
+        feedback.style.color = "green";
+        document.getElementById('nextBtn').style.display = current < questions.length - 1 ? 'inline-block' : 'none';
+      } else {
+        feedback.textContent = "❌ Incorrect. Try again!";
+        feedback.style.color = "red";
+      }
+    }
+
+    document.getElementById('nextBtn').onclick = function() {
+      current++;
+      if (current < questions.length) {
+        showQuestion(current);
+      } else {
+        document.getElementById('question').textContent = "🎉 You've completed the Cloud Computing Quiz!";
+        document.getElementById('options').innerHTML = '';
+        document.getElementById('feedback').textContent = '';
+        document.getElementById('nextBtn').style.display = 'none';
+      }
+    };
+
+    // Load first question
+    showQuestion(current);
+  </script>
+</body>
+</html>

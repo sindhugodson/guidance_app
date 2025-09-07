@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Software Engineering Quiz</title>
+  <link rel="stylesheet" href="career.css"> <!-- Gradient background from your main CSS -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      text-align: center;
+      padding: 30px 20px 10px 20px;
+    }
+
+    header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    header p {
+      margin: 0;
+      font-size: 1.1em;
+      color: #f1f1f1;
+    }
+
+    .quiz-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      padding: 30px;
+      margin-top: 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    #progress {
+      margin-bottom: 15px;
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #ffeb3b;
+    }
+
+    .quiz-question {
+      font-size: 1.4em;
+      margin-bottom: 20px;
+    }
+
+    .quiz-options button {
+      display: block;
+      margin: 10px auto;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #ffffff;
+      width: 80%;
+      max-width: 400px;
+      font-size: 1em;
+      transition: 0.3s;
+    }
+
+    .quiz-options button:hover {
+      background: #f1f1f1;
+      transform: scale(1.05);
+    }
+
+    #feedback {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 1.2em;
+      min-height: 30px;
+    }
+
+    #nextBtn {
+      padding: 12px 25px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: #4CAF50;
+      color: white;
+      font-size: 1em;
+      margin-top: 20px;
+      display: none;
+      transition: 0.3s;
+    }
+
+    #nextBtn:hover {
+      background: #45a049;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🚀 Software Engineering Quiz</h1>
+    <p>Test your knowledge before starting the course!</p>
+  </header>
+
+  <div class="quiz-container">
+    <div id="progress"></div>
+    <div class="quiz-question" id="question"></div>
+    <div class="quiz-options" id="options"></div>
+    <div class="quiz-feedback" id="feedback"></div>
+    <button id="nextBtn">Next Question</button>
+  </div>
+
+  <script>
+    const questions = [
+      { question: "Which language is most commonly used for backend web development?", options: ["Python", "HTML", "CSS", "Excel"], answer: 0 },
+      { question: "What does UI stand for in UI/UX design?", options: ["User Interface", "Unique Input", "Universal Internet", "User Integration"], answer: 0 },
+      { question: "Which of the following is a cybersecurity threat?", options: ["Phishing", "Photoshop", "Phonetics", "Physics"], answer: 0 },
+      { question: "Which tool is commonly used for data analysis in Python?", options: ["NumPy", "React", "Bootstrap", "Unity"], answer: 0 },
+      { question: "Which cloud platform is NOT among the big three?", options: ["AWS", "Azure", "Google Cloud", "Heroku"], answer: 3 },
+      { question: "What does CI/CD stand for in DevOps?", options: ["Continuous Integration/Continuous Deployment","Cloud Infrastructure/Code Development","Central Input/Code Debugging","Continuous Internet/Cloud Data"], answer: 0 },
+      { question: "Which technology is used for creating smart contracts?", options: ["Solidity", "Java", "Swift", "PHP"], answer: 0 },
+      { question: "Which protocol is commonly used in IoT devices?", options: ["MQTT", "SMTP", "FTP", "HTTP"], answer: 0 },
+      { question: "Which engine is popular for AR/VR game development?", options: ["Unity", "TensorFlow", "Django", "Flask"], answer: 0 },
+      { question: "Which field uses machine learning to make predictions?", options: ["Data Science", "Web Design", "Networking", "Hardware Engineering"], answer: 0 }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function showQuestion(idx) {
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('nextBtn').style.display = 'none';
+      const q = questions[idx];
+      document.getElementById('progress').textContent = `Question ${idx+1} of ${questions.length}`;
+      document.getElementById('question').textContent = q.question;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = String.fromCharCode(65 + i) + ") " + opt;
+        btn.onclick = () => checkAnswer(i);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      const q = questions[current];
+      const feedback = document.getElementById('feedback');
+      if (selected === q.answer) {
+        feedback.textContent = "✅ Correct!";
+        feedback.style.color = "lightgreen";
+        score++;
+        document.getElementById('nextBtn').style.display = 'inline-block';
+      } else {
+        feedback.textContent = "❌ Incorrect. Try again!";
+        feedback.style.color = "red";
+      }
+    }
+
+    document.getElementById('nextBtn').onclick = function() {
+      current++;
+      if (current < questions.length) {
+        showQuestion(current);
+      } else {
+        document.getElementById('progress').textContent = '';
+        document.getElementById('question').textContent = "🎉 Quiz Completed!";
+        document.getElementById('options').innerHTML = '';
+        document.getElementById('feedback').textContent = `Your Score: ${score}/${questions.length}`;
+        document.getElementById('feedback').style.color = "yellow";
+        this.textContent = "Restart Quiz";
+        this.onclick = function() {
+          current = 0;
+          score = 0;
+          this.textContent = "Next Question";
+          showQuestion(current);
+        };
+      }
+    };
+
+    // Show first question
+    showQuestion(current);
+  </script>
+</body>
+</html>

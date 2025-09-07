@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>IoT & Embedded Systems Quiz</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #16a085, #1abc9c);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      text-align: center;
+      background: #fff;
+      width: 100%;
+      padding: 20px;
+      box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2em;
+      color: #16a085;
+    }
+    header p {
+      color: #555;
+    }
+    .quiz-container {
+      background: #fff;
+      margin-top: 30px;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 700px;
+    }
+    .quiz-question {
+      font-size: 1.3em;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    .quiz-options button {
+      display: block;
+      width: 100%;
+      background: #f5f5f5;
+      border: none;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+      font-size: 1em;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .quiz-options button:hover {
+      background: #16a085;
+      color: #fff;
+    }
+    .quiz-feedback {
+      margin-top: 15px;
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    #nextBtn {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #16a085;
+      color: #fff;
+      font-size: 1em;
+      cursor: pointer;
+      display: none;
+      transition: 0.3s;
+    }
+    #nextBtn:hover {
+      background: #0e6e5b;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🔌 IoT & Embedded Systems Quiz</h1>
+    <p>Test your knowledge of Internet of Things and Embedded Technologies!</p>
+  </header>
+  <div class="quiz-container">
+    <div class="quiz-question" id="question"></div>
+    <div class="quiz-options" id="options"></div>
+    <div class="quiz-feedback" id="feedback"></div>
+    <button id="nextBtn">Next Question</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What does IoT stand for?",
+        options: ["Internet of Things", "Input of Technology", "Integration of Tools", "Internet of Transmission"],
+        answer: 0
+      },
+      {
+        question: "Which communication protocol is widely used in IoT devices?",
+        options: ["HTTP", "MQTT", "FTP", "SMTP"],
+        answer: 1
+      },
+      {
+        question: "Which of the following is a common IoT hardware platform?",
+        options: ["Raspberry Pi", "MySQL", "TensorFlow", "Docker"],
+        answer: 0
+      },
+      {
+        question: "Which embedded system is used in automobiles for engine control?",
+        options: ["ECU (Electronic Control Unit)", "BIOS", "GPU", "PLC"],
+        answer: 0
+      },
+      {
+        question: "Which sensor is commonly used to detect motion?",
+        options: ["Accelerometer", "Gyroscope", "PIR Sensor", "Barometer"],
+        answer: 2
+      },
+      {
+        question: "What does an embedded system typically consist of?",
+        options: ["CPU, Memory, I/O", "Monitor, Keyboard, Mouse", "Database, Server, Client", "Browser, Server, Cloud"],
+        answer: 0
+      },
+      {
+        question: "Which wireless technology is often used in smart home IoT devices?",
+        options: ["Bluetooth Low Energy (BLE)", "SMTP", "Ethernet", "POP3"],
+        answer: 0
+      },
+      {
+        question: "Real-time operating systems (RTOS) are crucial in embedded systems because:",
+        options: ["They provide faster internet", "They ensure tasks are completed within strict timing", "They reduce electricity cost", "They enable cloud storage"],
+        answer: 1
+      },
+      {
+        question: "Which company developed the Arduino platform?",
+        options: ["Intel", "Texas Instruments", "Arduino LLC", "IBM"],
+        answer: 2
+      },
+      {
+        question: "Which layer of IoT architecture handles data collection from sensors?",
+        options: ["Perception Layer", "Application Layer", "Network Layer", "Business Layer"],
+        answer: 0
+      }
+    ];
+
+    let current = 0;
+
+    function showQuestion(idx) {
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('nextBtn').style.display = 'none';
+      const q = questions[idx];
+      document.getElementById('question').textContent = q.question;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = String.fromCharCode(65 + i) + ") " + opt;
+        btn.onclick = () => checkAnswer(i);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      const q = questions[current];
+      const feedback = document.getElementById('feedback');
+      if (selected === q.answer) {
+        feedback.textContent = "✅ Correct!";
+        feedback.style.color = "green";
+        document.getElementById('nextBtn').style.display = current < questions.length - 1 ? 'inline-block' : 'none';
+      } else {
+        feedback.textContent = "❌ Incorrect. Try again!";
+        feedback.style.color = "red";
+      }
+    }
+
+    document.getElementById('nextBtn').onclick = function() {
+      current++;
+      if (current < questions.length) {
+        showQuestion(current);
+      } else {
+        document.getElementById('question').textContent = "🎉 You've completed the IoT & Embedded Systems Quiz!";
+        document.getElementById('options').innerHTML = '';
+        document.getElementById('feedback').textContent = '';
+        document.getElementById('nextBtn').style.display = 'none';
+      }
+    };
+
+    // Load first question
+    showQuestion(current);
+  </script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Science & AI Quiz</title>
+  <style>
+    /* Background gradient */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1a237e, #283593, #3949ab);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    /* Quiz container */
+    .quiz-container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      text-align: center;
+      width: 90%;
+      max-width: 650px;
+      box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    /* Title */
+    .quiz-container h1 {
+      margin-bottom: 10px;
+      font-size: 2rem;
+      color: #00e5ff;
+    }
+
+    .quiz-container p {
+      margin-bottom: 20px;
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    /* Question */
+    .question {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+
+    /* Options */
+    .options button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      background: #fff;
+      color: #333;
+      transition: all 0.3s ease;
+    }
+
+    .options button:hover {
+      background: #00e5ff;
+      color: #fff;
+      transform: scale(1.03);
+    }
+
+    /* Next button */
+    #next-btn {
+      margin-top: 20px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      background: #ff9800;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+      display: none;
+    }
+
+    #next-btn:hover {
+      background: #e68900;
+    }
+
+    /* Score result */
+    .result {
+      font-size: 1.5rem;
+      margin-top: 20px;
+      font-weight: bold;
+      color: #00ff99;
+    }
+
+    /* Restart button */
+    #restart-btn {
+      margin-top: 15px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      background: #03a9f4;
+      color: #fff;
+      cursor: pointer;
+      display: none;
+      transition: 0.3s;
+    }
+
+    #restart-btn:hover {
+      background: #0288d1;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>🤖 Data Science & AI Quiz</h1>
+    <p>Test your knowledge of Data Science and Artificial Intelligence!</p>
+    
+    <div id="quiz">
+      <div class="question" id="question">Loading question...</div>
+      <div class="options" id="options"></div>
+      <button id="next-btn">Next</button>
+    </div>
+
+    <div class="result" id="result"></div>
+    <button id="restart-btn">Restart Quiz</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "Which programming language is most commonly used for Data Science?",
+        options: ["Python", "C++", "Java", "Ruby"],
+        answer: "Python"
+      },
+      {
+        question: "What does AI stand for?",
+        options: ["Automatic Intelligence", "Artificial Intelligence", "Applied Innovation", "Algorithmic Insight"],
+        answer: "Artificial Intelligence"
+      },
+      {
+        question: "Which library is primarily used for data visualization in Python?",
+        options: ["NumPy", "Matplotlib", "TensorFlow", "Scikit-learn"],
+        answer: "Matplotlib"
+      },
+      {
+        question: "Which of the following is a supervised learning algorithm?",
+        options: ["K-Means", "Linear Regression", "Apriori", "DBSCAN"],
+        answer: "Linear Regression"
+      },
+      {
+        question: "What is the process of finding hidden patterns in data called?",
+        options: ["Data Mining", "Data Wrangling", "Data Cleaning", "Data Sorting"],
+        answer: "Data Mining"
+      },
+      {
+        question: "Which of these is a popular deep learning framework?",
+        options: ["TensorFlow", "Pandas", "Excel", "Matplotlib"],
+        answer: "TensorFlow"
+      },
+      {
+        question: "What is overfitting in machine learning?",
+        options: [
+          "Model learns training data too well and performs poorly on new data",
+          "Model is too simple and underperforms",
+          "Model predicts only random values",
+          "Model always gives 100% accuracy"
+        ],
+        answer: "Model learns training data too well and performs poorly on new data"
+      },
+      {
+        question: "Which algorithm is used for classification problems?",
+        options: ["K-Nearest Neighbors", "K-Means", "Apriori", "PageRank"],
+        answer: "K-Nearest Neighbors"
+      },
+      {
+        question: "Which of the following is a type of neural network?",
+        options: ["CNN", "HTML", "SQL", "CSS"],
+        answer: "CNN"
+      },
+      {
+        question: "What is the purpose of Natural Language Processing (NLP)?",
+        options: [
+          "To analyze and understand human language",
+          "To encrypt user data",
+          "To create hardware devices",
+          "To build computer networks"
+        ],
+        answer: "To analyze and understand human language"
+      }
+    ];
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const nextBtn = document.getElementById("next-btn");
+    const restartBtn = document.getElementById("restart-btn");
+    const resultEl = document.getElementById("result");
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const currentQuestion = questions[currentQuestionIndex];
+      questionEl.textContent = currentQuestion.question;
+      optionsEl.innerHTML = "";
+
+      currentQuestion.options.forEach(option => {
+        const button = document.createElement("button");
+        button.textContent = option;
+        button.onclick = () => checkAnswer(option);
+        optionsEl.appendChild(button);
+      });
+    }
+
+    function checkAnswer(selected) {
+      const correctAnswer = questions[currentQuestionIndex].answer;
+      if (selected === correctAnswer) {
+        score++;
+      }
+      Array.from(optionsEl.children).forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === correctAnswer) {
+          btn.style.background = "#4caf50";
+          btn.style.color = "#fff";
+        } else if (btn.textContent === selected) {
+          btn.style.background = "#f44336";
+          btn.style.color = "#fff";
+        }
+      });
+      nextBtn.style.display = "inline-block";
+    }
+
+    nextBtn.addEventListener("click", () => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+        nextBtn.style.display = "none";
+      } else {
+        showResult();
+      }
+    });
+
+    function showResult() {
+      document.getElementById("quiz").style.display = "none";
+      resultEl.textContent = `🎉 You scored ${score} out of ${questions.length}!`;
+      restartBtn.style.display = "inline-block";
+    }
+
+    restartBtn.addEventListener("click", () => {
+      currentQuestionIndex = 0;
+      score = 0;
+      document.getElementById("quiz").style.display = "block";
+      resultEl.textContent = "";
+      restartBtn.style.display = "none";
+      loadQuestion();
+      nextBtn.style.display = "none";
+    });
+
+    loadQuestion();
+  </script>
+</body>
+</html>

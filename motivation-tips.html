@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gamified Motivation</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #3b0764, #312e81, #1e1b4b);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .card {
+      background: rgba(25, 25, 35, 0.9);
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    .card h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .subtext {
+      font-size: 14px;
+      color: #cbd5e1;
+      margin-bottom: 20px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .stat {
+      background: rgba(120, 60, 200, 0.3);
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .stat p {
+      margin: 4px 0;
+    }
+    .tip {
+      background: rgba(120, 60, 200, 0.4);
+      padding: 16px;
+      border-radius: 12px;
+      font-style: italic;
+      margin-bottom: 20px;
+    }
+    button {
+      background: linear-gradient(to right, #3b82f6, #8b5cf6);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>🏆 Gamified Motivation</h2>
+    <p class="subtext">Keep pushing forward! Earn XP and stay motivated.</p>
+
+    <!-- XP & Streak -->
+    <div class="stats">
+      <div class="stat">
+        <p id="xp" style="font-size:18px;font-weight:bold;">120 XP</p>
+        <p style="font-size:12px;color:#ddd;">Total Points</p>
+      </div>
+      <div class="stat">
+        <p id="streak" style="font-size:18px;font-weight:bold;">5 Days</p>
+        <p style="font-size:12px;color:#ddd;">Streak</p>
+      </div>
+    </div>
+
+    <!-- Tip Section -->
+    <div class="tip" id="tip">“Break big goals into small steps 🚀”</div>
+
+    <!-- Button -->
+    <button onclick="getNewTip()">🎲 New Tip & Earn XP</button>
+  </div>
+
+  <script>
+    const tips = [
+      "Break big goals into small steps 🚀",
+      "Consistency beats intensity 🔑",
+      "Celebrate small wins 🎉",
+      "Learn from failures, not fear them 💡",
+      "Teach someone what you’ve learned 👩‍🏫",
+      "Focus on progress, not perfection 🌱",
+      "Reward yourself after tough tasks 🏆",
+      "Stay curious and keep exploring 🔍"
+    ];
+
+    let xp = 120;
+    let streak = 5;
+
+    function getNewTip() {
+      const randomTip = tips[Math.floor(Math.random() * tips.length)];
+      document.getElementById("tip").innerText = `“${randomTip}”`;
+
+      xp += 10;
+      document.getElementById("xp").innerText = xp + " XP";
+
+      // simulate streak increase (you can remove if not needed)
+      streak += 1;
+      document.getElementById("streak").innerText = streak + " Days";
+    }
+  </script>
+</body>
+</html>

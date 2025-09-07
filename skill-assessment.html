@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill Assessment - PathPilot</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      width: 90%;
+      max-width: 900px;
+      height: 90%;
+      overflow-y: auto;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      font-size: 26px;
+      color: #fff;
+    }
+
+    p {
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 8px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #1e3c72, #2a5298);
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: linear-gradient(90deg, #2a5298, #1e3c72);
+    }
+
+    .question {
+      text-align: left;
+      margin: 15px 0;
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      border-radius: 8px;
+      border: none;
+      padding: 10px;
+      margin-top: 5px;
+      font-family: monospace;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(0,0,0,0.4);
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Skill Assessment</h1>
+    <p>Select a subject to start your test:</p>
+
+    <!-- Subject Buttons -->
+    <button class="btn" onclick="startTest('DSA')">DSA</button>
+    <button class="btn" onclick="startTest('OOPs')">OOPs</button>
+    <button class="btn" onclick="startTest('CN')">Computer Networks</button>
+    <button class="btn" onclick="startTest('DBMS')">DBMS</button>
+
+    <!-- Quiz Area -->
+    <div id="quiz-area"></div>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function startTest(subject) {
+      let quizArea = document.getElementById("quiz-area");
+      document.getElementById("result").style.display = "none";
+
+      // Hardcoded Questions (5 MCQ + 5 Coding/Text)
+      let questionSets = {
+        "DSA": {
+          mcq: [
+            {q:"Which uses FIFO?", opts:["Stack","Queue","Tree"], ans:"Queue"},
+            {q:"Best case of Binary Search?", opts:["O(n)","O(log n)","O(n log n)"], ans:"O(log n)"},
+            {q:"Which is not linear DS?", opts:["Array","Queue","Graph"], ans:"Graph"},
+            {q:"Which DS used in Recursion?", opts:["Stack","Queue","Heap"], ans:"Stack"},
+            {q:"Heap is used in?", opts:["MergeSort","HeapSort","QuickSort"], ans:"HeapSort"},
+          ],
+          coding: [
+            "Write a function to reverse an array.",
+            "Implement a stack using arrays.",
+            "Find the largest element in an array.",
+            "Write BFS traversal for a graph.",
+            "Find factorial using recursion."
+          ]
+        },
+        "OOPs": {
+          mcq: [
+            {q:"OOP stands for?", opts:["Object Oriented Programming","Operation Oriented Process","Only One Program"], ans:"Object Oriented Programming"},
+            {q:"Which is not OOP feature?", opts:["Encapsulation","Polymorphism","Recursion"], ans:"Recursion"},
+            {q:"Private members are accessible in?", opts:["Same class","Other classes","Everywhere"], ans:"Same class"},
+            {q:"Which keyword used for inheritance in C++?", opts:["extends","inherits",": public"], ans:": public"},
+            {q:"Constructor has?", opts:["Return type","No return type","Void"], ans:"No return type"},
+          ],
+          coding: [
+            "Write a class definition for Car with model and speed.",
+            "Implement inheritance with a base class Shape and subclass Circle.",
+            "Demonstrate polymorphism with function overloading.",
+            "Implement encapsulation with getters/setters.",
+            "Write a program for student class with constructor."
+          ]
+        },
+        "CN": {
+          mcq: [
+            {q:"How many OSI layers?", opts:["5","7","4"], ans:"7"},
+            {q:"TCP is?", opts:["Connectionless","Connection-oriented","Stateless"], ans:"Connection-oriented"},
+            {q:"IP address size in IPv6?", opts:["32-bit","64-bit","128-bit"], ans:"128-bit"},
+            {q:"HTTP works on?", opts:["Transport","Application","Session"], ans:"Application"},
+            {q:"Which is not routing algorithm?", opts:["Distance Vector","Link State","Round Robin"], ans:"Round Robin"},
+          ],
+          coding: [
+            "Explain TCP vs UDP difference.",
+            "Write steps of 3-way handshake.",
+            "Describe working of DNS.",
+            "Explain difference between hub and switch.",
+            "Write short note on subnetting."
+          ]
+        },
+        "DBMS": {
+          mcq: [
+            {q:"SQL stands for?", opts:["Structured Query Language","Simple Query Language","Sequential Query Logic"], ans:"Structured Query Language"},
+            {q:"Which is not a key in DB?", opts:["Primary","Foreign","Duplicate"], ans:"Duplicate"},
+            {q:"Which normal form removes transitive dependency?", opts:["2NF","3NF","BCNF"], ans:"3NF"},
+            {q:"Which command used to remove table?", opts:["DELETE","DROP","REMOVE"], ans:"DROP"},
+            {q:"Transaction property ACID - I stands for?", opts:["Isolation","Integration","Index"], ans:"Isolation"},
+          ],
+          coding: [
+            "Write SQL query: get all students with marks > 80.",
+            "Query to count employees department-wise.",
+            "SQL to get 2nd highest salary.",
+            "Explain difference between DELETE and TRUNCATE.",
+            "Write query to join Students and Courses table."
+          ]
+        }
+      };
+
+      let subjectSet = questionSets[subject];
+
+      // Render Questions
+      let html = `<h2>${subject} Test</h2><form id="quizForm">`;
+
+      // MCQs
+      subjectSet.mcq.forEach((item, i) => {
+        html += `<div class='question'><b>Q${i+1}. ${item.q}</b><br>`;
+        item.opts.forEach(opt => {
+          html += `<input type='radio' name='q${i}' value='${opt}'> ${opt}<br>`;
+        });
+        html += `</div>`;
+      });
+
+      // Coding
+      subjectSet.coding.forEach((item, i) => {
+        html += `<div class='question'><b>Q${i+6}. ${item}</b><br>
+          <textarea rows='4' placeholder='Write your answer here...'></textarea></div>`;
+      });
+
+      html += `<button type='button' class='btn' onclick="submitTest('${subject}')">Submit</button></form>`;
+      quizArea.innerHTML = html;
+    }
+
+    function submitTest(subject) {
+      let score = 0;
+      let form = document.getElementById("quizForm");
+      let inputs = form.querySelectorAll("input[type='radio']:checked");
+
+      // Answers for each subject
+      let answers = {
+        "DSA":["Queue","O(log n)","Graph","Stack","HeapSort"],
+        "OOPs":["Object Oriented Programming","Recursion","Same class",": public","No return type"],
+        "CN":["7","Connection-oriented","128-bit","Application","Round Robin"],
+        "DBMS":["Structured Query Language","Duplicate","3NF","DROP","Isolation"]
+      };
+
+      inputs.forEach((inp, i) => {
+        if (inp.value === answers[subject][i]) score++;
+      });
+
+      let result = document.getElementById("result");
+      result.style.display = "block";
+      result.innerHTML = `
+        <h3>Result</h3>
+        <p>${subject} MCQ Score: ${score}/5</p>
+        <p>⚡ Your written coding answers are in textareas. Review them with mentor or auto-check in future upgrade.</p>
+      `;
+    }
+  </script>
+</body>
+</html>
